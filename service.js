@@ -70,7 +70,7 @@ async function main() {
 
   // 3) Query
   const query = `
-    SELECT TOP 1  p.*,
+    SELECT  p.*,
         CASE 
             WHEN p.ExpiryDate = CONVERT(date, GETDATE()) THEN '3'
             WHEN p.ExpiryDate = DATEADD(MONTH, 3, CONVERT(date, GETDATE())) THEN '2'
@@ -111,7 +111,7 @@ WHERE p.Deleted = '0'
     console.log(`พบ ${rows.length} รายการที่ต้องส่งแจ้งเตือน`);
 
     for (const row of rows) {
-      const emails = "digitalhealth.sbh2@gmail.com";//(row.Emails || "").trim();
+      const emails = (row.Emails || "").trim();
       const alertMessage = row.AlertMessage || "";
       const expiryThai = thaiDateFullMonth(row.Expiry);
       const alertType = String(row.AlertType || "");
@@ -139,7 +139,7 @@ WHERE p.Deleted = '0'
       try {
         await transporter.sendMail({
           from: {
-            name: process.env.MAIL_FROM_NAME || "กลุ่มการพยาบาล",
+            name: "กลุ่มการพยาบาล",
             address: process.env.SMTP_USER
           },
           to: emails,
